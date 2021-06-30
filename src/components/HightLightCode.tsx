@@ -5,11 +5,10 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, RichText } from '@tarojs/components'
 
-// import hljs from './lib/index'
-const hljs = require('./lib/index')
+import hljs from 'highlight.js'
 
 import './HightLightCode.scss'
-import './lib/rainbow.scss'
+import './rainbow.scss'
 
 // 支持的解析语言列表
 const LANGUAGE_LIST = [
@@ -59,7 +58,7 @@ class HighlightCode extends Component<HLCProps, HLCState> {
 	// 解析code
 	parseCode(input, language) {
 		const lang = LANGUAGE_LIST.includes(language) ? language : 'javascript'
-		const { value } = hljs.highlight(lang, input)
+		const { value } = hljs.highlight(input, {language: lang, ignoreIllegals: true})
 		const highlighted = value.replace('&amp;', '&').trim()
 
 		let codeResult = `<code class="${lang}">${highlighted}</code>`
@@ -70,9 +69,12 @@ class HighlightCode extends Component<HLCProps, HLCState> {
 
 	render() {
 		const { code } = this.state
+
 		return (
 			<View className='highlightCode-comp'>
-				<RichText nodes={code} space='nbsp'></RichText>
+        <View className='hljs'>
+				  <RichText nodes={code} space='nbsp'></RichText>
+        </View>
 			</View>
 		)
 	}

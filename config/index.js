@@ -54,23 +54,11 @@ const config = {
   defineConstants: {
   },
   mini: {
-    compile: {
-			exclude: [
-				path.resolve(__dirname, '..', 'src/components/lib/highlight.code.js'),
-				path.resolve(__dirname, '..', 'src/components/lib/index.js'),
-				path.resolve(__dirname, '..', 'src/components/lib/regex.js'),
-				path.resolve(__dirname, '..', 'src/components/lib/language/languages-c-like.js'),
-				path.resolve(__dirname, '..', 'src/components/lib/language/languages-c.js'),
-				path.resolve(__dirname, '..', 'src/components/lib/language/languages-cpp.js'),
-				path.resolve(__dirname, '..', 'src/components/lib/language/languages-css.js'),
-				path.resolve(__dirname, '..', 'src/components/lib/language/languages-javascript.js'),
-				path.resolve(__dirname, '..', 'src/components/lib/language/languages-markdown.js'),
-				path.resolve(__dirname, '..', 'src/components/lib/language/languages-sql.js'),
-				path.resolve(__dirname, '..', 'src/components/lib/language/languages-typescript.js'),
-				path.resolve(__dirname, '..', 'src/components/lib/language/languages-xml.js')
-
-			],
-		},
+    // compile: {
+		// 	exclude: [
+		// 		path.resolve(__dirname, '..', 'src/components/lib/index.js')
+		// 	],
+		// },
     postcss: {
       autoprefixer: {
         enable: true,

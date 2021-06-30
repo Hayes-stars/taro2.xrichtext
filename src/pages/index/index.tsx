@@ -69,7 +69,7 @@ class Index extends Component {
 
 	onJumpCodePage() {
 		Taro.navigateTo({
-			url: '/pages/highLightPage/index'
+			url: '/pages/hightLightPage/index'
 		})
 	}
 
