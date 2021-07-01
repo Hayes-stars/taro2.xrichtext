@@ -21,6 +21,8 @@ markdown格式解析 | 微信小程序/h5
 
 - h5端默认taro的基础组件RichText，自定义实现图片自适应加点击事件
 - 小程序端自定义富文本渲染组件MpParseHtml，支持音频、视频、图片、外部链接点击事件处理
+- 基于taro2.x 类函数组件规范递归渲染html节点
+  - `https://nervjs.github.io/taro/docs/2.x/functional-component#%E7%B1%BB%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BB%84%E4%BB%B6`
 
 ### 参考资料
 
