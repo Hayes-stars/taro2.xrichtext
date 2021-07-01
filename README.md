@@ -24,6 +24,11 @@ markdown格式解析 | 微信小程序/h5
 - 基于taro2.x 类函数组件规范递归渲染html节点
   - `https://nervjs.github.io/taro/docs/2.x/functional-component#%E7%B1%BB%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BB%84%E4%BB%B6`
 
+### 相关截图
+
+![avatar](/src/assets/images/richtext-img.jpg)
+![avatar](/src/assets/images/codetext-img.jpg)
+
 ### 参考资料
 
 ```bash
