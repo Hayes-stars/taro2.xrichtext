@@ -10,6 +10,7 @@ import showdown from './utils/showdown.js'
 import { getSystemInfo, cacheInstance, getUniqueKey } from './utils/util'
 
 import CustomAudio from './CustomAudio'
+import HighlightCode from './HightLightCode'
 
 import Page from '~/utils/pages'
 
@@ -31,8 +32,9 @@ interface MPHProps {
 	rootKey?: string
 	/**
 	 * 解析语言类型
+	 * 'html' | 'markdown' (md)
 	 */
-	language?: string // 'html' | 'markdown' (md)
+	language?: string
 	nodes: any
 }
 
@@ -119,7 +121,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 	 * @param nodes 节点对象
 	 */
 	handleParseNodes(nodes) {
-		// console.log('handleParseNodes===', nodes)
 		let data: any = []
 		if (typeof nodes === 'string') {
 			// 初始为html富文本字符串
@@ -136,7 +137,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 			this.setState({
 				nodesData
 			})
-			// console.log('handleParseNodes 节点解析结果data------', data)
 			return data
 		}
 	}
@@ -177,7 +177,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 				}
 				cacheInstance.set(wxparseRootKey, transData)
 				// 作调试用，注释打开可以查看HTML解析出来的dom结构
-				// console.log(this.state)
 			} catch (error) {
 				reject(JSON.stringify(error))
 			}
@@ -287,7 +286,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 			imageHeight,
 			imageWidth
 		} = props
-		// console.log('render01 props ------: ------:::', props)
 
 		const item = nodesData
 		const childNodes =
@@ -298,9 +296,7 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 				: []
 		let domHtml: any = null
 		if (item.node === 'element') {
-			// console.log('render01 element------:::------', item)
 			if (item.tag === 'button') {
-				// console.log('render01 button------')
 				domHtml = (
 					<Button type='default' size='mini'>
 						{childNodes.map((child, idx) => {
@@ -316,8 +312,13 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 						})}
 					</Button>
 				)
-			} else if (item.tag === 'ol') {
-				// console.log('render01 ol------')
+			} else if (item && item.tag === 'code') {
+        domHtml = (
+          <View>
+            <HighlightCode codeText={item.content} language={item.attr && item.attr.lang} />
+          </View>
+        )
+      } else if (item.tag === 'ol') {
 				domHtml = (
 					<View
 						className={`${item.classStr || ''} wxParse-ol mb10`}
@@ -343,7 +344,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'ul') {
-				// console.log('render01 ul------')
 				domHtml = (
 					<View
 						className={`${item.classStr || ''} wxParse-ul mb10`}
@@ -369,7 +369,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'li') {
-				// console.log('render01 li------')
 				domHtml = (
 					<View
 						className={`${item.classStr || ''} wxParse-li`}
@@ -389,7 +388,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'video') {
-				// console.log('render01 video------')
 				domHtml = (
 					<View
 						className={`${item.classStr || ''} wxParse-${item.tag}`}
@@ -402,7 +400,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'img') {
-				// console.log('item.tag img render01===', item)
 				domHtml = (
 					<View className='wxParse-img-inner'>
 						<Image
@@ -426,7 +423,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'a') {
-				// console.log('render01 aaaaaa------')
 				domHtml = (
 					<View
 						className={`wxParse-inline ${item.classStr || ''} wxParse-${
@@ -451,7 +447,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'table') {
-				// console.log('render01 table------')
 				domHtml = (
 					<View className={`${item.classStr || ''} wxParse-${item.tag}`}>
 						{childNodes.map((child, idxTable) => {
@@ -468,7 +463,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'tr') {
-				// console.log('render01 tr------')
 				domHtml = (
 					<View className={`${item.classStr || ''} wxParse-${item.tag}`}>
 						{childNodes.map((child, idxtr) => {
@@ -492,7 +486,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'td') {
-				// console.log('render01 td------')
 				domHtml = (
 					<View className={`${item.classStr || ''} wxParse-${item.tag}`}>
 						{childNodes.map((child, idxtd) => {
@@ -516,7 +509,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'audio') {
-				// console.log('render01 audio------')
 				domHtml = (
 					<View className='wxParse-audio'>
 						<View
@@ -532,13 +524,10 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'br') {
-				// console.log('render01 br br------')
 				domHtml = <Text>\n</Text>
 			} else if (item.tag === 'hr') {
-				// console.log('render01 hr hr hr---hr hr')
 				domHtml = <View className='wxParse-hr' />
 			} else if (item.tagType === 'block') {
-				// console.log('item.tagType render01 block===', item)
 				domHtml = (
 					<View
 						className={`${item.classStr || ''} wxParse-${item.tag} mb10`}
@@ -558,7 +547,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else {
-				// console.log('render01 其他block item=========', item)
 				domHtml = (
 					<View
 						className={`${item.classStr || ''} wxParse-${item.tag} wxParse-${
@@ -581,7 +569,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 				)
 			}
 		} else if (item.node === 'text') {
-			// console.log('render01 text item--------------: ', item)
 			domHtml = (
 				<View
 					className='WxEmojiView wxParse-inline'
@@ -618,7 +605,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 			imageHeight,
 			imageWidth
 		} = props
-		// console.log('render02 child props===: ', props)
 
 		const item = nodesData
 		const childNodes =
@@ -629,9 +615,7 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 				: []
 		let domHtml: any = null
 		if (item.node === 'element') {
-			// console.log('render02 child element')
 			if (item.tag === 'button') {
-				// console.log('render02 child button')
 				domHtml = (
 					<Button type='default' size='mini'>
 						{childNodes.map((child, idx) => {
@@ -647,8 +631,13 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 						})}
 					</Button>
 				)
-			} else if (item.tag === 'ol') {
-				// console.log('render02 child ol')
+			} else if (item && item.tag === 'code') {
+        domHtml = (
+          <View>
+            <HighlightCode codeText={item.content} language={item.attr && item.attr.lang} />
+          </View>
+        )
+      }  else if (item.tag === 'ol') {
 				domHtml = (
 					<View
 						className={`${item.classStr || ''} wxParse-ol mb10`}
@@ -674,7 +663,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'ul') {
-				// console.log('render02 child ul')
 				domHtml = (
 					<View
 						className={`${item.classStr || ''} wxParse-ul mb10`}
@@ -700,7 +688,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'li') {
-				// console.log('render02 child li')
 				domHtml = (
 					<View
 						className={`${item.classStr || ''} wxParse-li`}
@@ -720,7 +707,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'video') {
-				// console.log('render02 child video')
 				domHtml = (
 					<View
 						className={`${item.classStr || ''} wxParse-${item.tag}`}
@@ -733,8 +719,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'img') {
-				// console.log('render02 child img')
-				// console.log('render02 child img ===', item)
 				domHtml = (
 					<View className='wxParse-img-inner'>
 						<Image
@@ -758,7 +742,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'a') {
-				// console.log('render02 child aaaaaaa标签')
 				domHtml = (
 					<View
 						className={`wxParse-inline ${item.classStr || ''} wxParse-${
@@ -783,7 +766,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'table') {
-				// console.log('render02 child table')
 				domHtml = (
 					<View className={`${item.classStr || ''} wxParse-${item.tag}`}>
 						{childNodes.map((child, idxTable) => {
@@ -800,7 +782,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'tr') {
-				// console.log('render02 child tr===')
 				domHtml = (
 					<View className={`${item.classStr || ''} wxParse-${item.tag}`}>
 						{childNodes.map((child, idxtr) => {
@@ -824,7 +805,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'td') {
-				// console.log('render02 child td---')
 				domHtml = (
 					<View className={`${item.classStr || ''} wxParse-${item.tag}`}>
 						{childNodes.map((child, idxtd) => {
@@ -848,7 +828,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'audio') {
-				// console.log('render02 child audio---')
 				domHtml = (
 					<View className='wxParse-audio'>
 						<View
@@ -864,13 +843,10 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else if (item.tag === 'br') {
-				// console.log('render02 child br br br---')
 				domHtml = <Text>\n</Text>
 			} else if (item.tag === 'hr') {
-				// console.log('render02 child hr hr hr---hr hr')
 				domHtml = <View className='wxParse-hr' />
 			} else if (item.tagType === 'block') {
-				// console.log('item.tagType render02 block===', item)
 				domHtml = (
 					<View
 						className={`${item.classStr || ''} wxParse-${item.tag} mb10`}
@@ -890,7 +866,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 					</View>
 				)
 			} else {
-				// console.log('render02 child else else else -----------')
 				domHtml = (
 					<View
 						className={`${item.classStr || ''} wxParse-${item.tag} wxParse-${
@@ -913,7 +888,6 @@ class MpParseHtml extends Component<MPHProps, MPHState> {
 				)
 			}
 		} else if (item.node === 'text') {
-			// console.log('render02 child text-------------')
 			domHtml = (
 				<View
 					className='WxEmojiView wxParse-inline'
